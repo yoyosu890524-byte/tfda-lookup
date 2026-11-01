@@ -1,0 +1,106 @@
+<!doctype html><html lang="zh-Hant"><head><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#1f6feb">
+<title>TFDA 食品原料／添加物查詢</title>
+<style>
+:root{color-scheme:light dark;--b:#d0d7de;--m:#57606a;--a:#1f6feb}
+body{margin:0;font:16px/1.5 -apple-system,"PingFang TC","Noto Sans TC",sans-serif}
+header{position:sticky;top:0;background:Canvas;padding:10px 12px;border-bottom:1px solid var(--b)}
+h1{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--m)}
+.tabs{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}.tabs button{flex:1;padding:8px;border:1px solid var(--b);border-radius:8px;background:none;font-size:15px;color:inherit}
+.tabs button.on{background:var(--a);color:#fff;border-color:var(--a)}
+input,select{width:100%;box-sizing:border-box;padding:10px;font-size:16px;border:1px solid var(--b);border-radius:8px;background:Canvas;color:inherit;margin-top:6px}
+main{padding:8px 12px 40px}.cnt{font-size:13px;color:var(--m);margin:6px 0}
+.card{border:1px solid var(--b);border-radius:10px;padding:10px 12px;margin:8px 0}
+.t{font-weight:600}.s{color:var(--m);font-size:14px}.bad{color:#cf222e;font-size:13px;font-weight:600}
+dl{margin:6px 0 0;font-size:14px}dt{color:var(--m);font-size:12px;margin-top:6px}dd{margin:0;white-space:pre-wrap}
+details{font-size:13px;color:var(--m)}button.more{width:100%;padding:10px;border-radius:8px;border:1px solid var(--b);background:none;color:inherit}
+.card{cursor:pointer}.clip{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#detail{position:fixed;inset:0;background:Canvas;overflow:auto;padding:0 14px 40px;z-index:9}#detail[hidden]{display:none}
+.dbar{position:sticky;top:0;background:Canvas;padding:10px 0;border-bottom:1px solid var(--b)}.dbar button{font-size:16px;border:0;background:none;color:var(--a);padding:4px 0}
+#dbody h2{font-size:20px}#dbody h3{font-size:15px;margin-top:18px}#dbody dd{font-size:15px}.pre{white-space:pre-wrap;font-size:14px}
+a{color:var(--a)}.btn{display:block;text-align:center;padding:12px;border:1px solid var(--a);border-radius:8px;text-decoration:none;margin-top:16px}
+.row{display:flex;gap:8px;font-size:14px;padding:3px 0;border-bottom:1px dashed var(--b)}.row:last-child{border:0}.k{flex:0 0 5.5em;color:var(--m)}.row>span:last-child,.row>a{flex:1;min-width:0;word-break:break-word}.row a.t{color:var(--a);text-decoration:underline}
+.banner{background:var(--a);color:#fff;padding:8px 10px;border-radius:8px;margin-top:10px;font-size:14px}
+dl.tbl{border:1px solid var(--b);border-radius:8px;padding:0 10px}dl.tbl dt{margin-top:8px}dl.tbl dd{padding-bottom:8px;border-bottom:1px solid var(--b)}dl.tbl dd:last-child{border:0}
+header{padding:0;border:0;position:sticky;top:0;z-index:5}.top{background:#00808a;color:#fff;font-size:19px;font-weight:700;padding:10px 12px}.top small{display:block;font-size:11px;font-weight:400;opacity:.9}
+.tabs{margin:0;padding:6px 12px;background:Canvas;border-bottom:1px solid var(--b)}.tabs button.on{background:#00808a;border-color:#00808a}
+.form{margin:10px 12px;padding:10px 12px;border:1px solid var(--b);border-radius:8px;background:rgba(127,127,127,.08)}.form label{display:block;font-size:14px;margin-top:6px}
+.btns{display:flex;gap:8px;margin-top:10px}.btns button{flex:1;padding:10px;border:0;border-radius:6px;color:#fff;font-size:16px}.or{background:#f08300}.gr{background:#8a8a8a}
+.card{border:0;border-top:3px solid #f08300;background:rgba(127,127,127,.06)}.card:nth-child(even){background:rgba(127,127,127,.14)}.k{color:#00808a;font-weight:600}.cnt{font-size:15px}.cnt b{color:#f08300}
+.banner{background:#00808a}dl.tbl dt{color:#fff;background:#f08300;margin:8px -10px 0;padding:4px 10px}
+.acw{position:relative}#ac{position:absolute;left:0;right:0;top:100%;background:Canvas;border:1px solid var(--b);border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:20;max-height:60vh;overflow:auto}#ac[hidden]{display:none}
+.sg{padding:10px 12px;border-bottom:1px solid var(--b);font-size:15px;cursor:pointer}.sg:before{content:"🔍 ";opacity:.5}.sg small{color:var(--m);margin-left:6px}.sg b{color:#f08300}
+.disc{margin:10px 12px 0;padding:10px 12px;border:1px solid #f08300;border-radius:8px;font-size:13px;white-space:pre-wrap;max-height:9em;overflow:auto}
+</style></head><body>
+<header><div class="top">食品原料整合查詢平臺<small id="meta"></small></div>
+<div class="tabs"><button id="t0" class="on">食品原料</button><button id="t1">食品添加物</button><button id="t2">更新歷程</button></div></header>
+<div class="disc" id="disc"></div><div class="form"><label id="lc1">大分類：</label><select id="cat1"></select><label id="lc">次分類：</label><select id="cat"></select>
+<label>關鍵字：</label><div class="acw"><input id="q" type="search" placeholder="中文名、外文名或學名" autocomplete="off"><div id="ac" hidden></div></div>
+<div class="btns"><button id="go" class="or">搜尋</button><button id="rs" class="gr">重置</button></div></div>
+<main><div class="cnt" id="cnt"></div><div id="list"></div><button class="more" id="more" hidden>顯示更多</button>
+<div class="off"><span id="offst"></span> <button id="dlall" class="gr" style="padding:6px 10px;border-radius:6px;color:#fff;border:0">下載全部附件離線使用</button></div><details id="note"><summary>資料說明</summary><div id="notetxt" style="white-space:pre-wrap"></div></details><div id="hist" hidden></div></main><div id="detail" hidden><div class="dbar"><button id="back">‹ 返回</button></div><div id="dbody"></div></div>
+<script type="text/plain" id="main">
+const DATA=window.__DATA;
+const OF=[["大分類","次分類","中文名稱","外文名稱","學名","部位","備註"],["類別","中文名稱","外文名稱","使用食品範圍及限量","使用限制","規格"]];
+const LISTURL=["https://consumer.fda.gov.tw/Food/Material.aspx?nodeID=160","https://consumer.fda.gov.tw/Law/FoodAdditivesList.aspx?nodeID=521"];
+const SETS=["ing","add"].map((k,t)=>{const d=DATA.details&&DATA.details[k];if(d&&d.length)return d;
+ return (t?DATA.additives:DATA.ingredients).map(r=>({url:LISTURL[t],cat:t?r[0]:r[1],fields:OF[t].map((n,i)=>[n,r[i]||""])}))});
+SETS.forEach(S=>S.forEach(it=>{it.m={};it.fields.forEach(f=>it.m[f[0]]=f[1]);it.ix=it.fields.concat(it.list||[]).map(f=>f[1]).join(" ").toLowerCase().replace(/\s+/g," ")}));
+const CATK=["次分類","類別"];const CAT1=["大分類",null];
+let tab=0,lim=50,hits=[];const $=id=>document.getElementById(id);
+$("meta").textContent="資料來源：TFDA 消費者專區詳細頁＋開放資料（InfoId 4、61）・更新於 "+(DATA.detailsScraped||DATA.fetched);
+$("notetxt").textContent=DATA.ingredientNotice;$("disc").textContent=DATA.ingredientNotice;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function opts(a){return '<option value="">全部</option>'+a.map(x=>`<option>${esc(x)}</option>`).join("")}
+function cats(){$("lc").textContent=tab?"類別：":"次分類：";$("lc1").hidden=$("cat1").hidden=!!tab;if(!tab)$("cat1").innerHTML=opts([...new Set(SETS[0].map(r=>r.m["大分類"]))]);sub();}
+function sub(){const v=$("cat1").value;const c=[...new Set(SETS[tab].filter(r=>tab||!v||r.m["大分類"]==v).map(r=>r.m[CATK[tab]]))];$("cat").innerHTML='<option value="">全部</option>'+c.map(x=>`<option>${esc(x)}</option>`).join("");}
+function render(){const q=$("q").value.trim().toLowerCase().split(/\s+/).filter(Boolean),c=$("cat").value,S=SETS[tab];hits=[];
+for(let i=0;i<S.length;i++){if(c&&S[i].m[CATK[tab]]!==c)continue;const c1=tab?"":$("cat1").value;if(c1&&S[i].m["大分類"]!==c1)continue;if(q.every(w=>S[i].ix.includes(w)))hits.push(i);}
+$("cnt").innerHTML=`共有 <b>${hits.length}</b> 筆搜尋結果`+(hits.length>lim?`，顯示前 ${lim} 筆`:"")+"・點選查看完整資料";
+$("list").innerHTML=hits.slice(0,lim).map(i=>{const m=S[i].m;
+const L=S[i].list&&S[i].list.length?S[i].list:null;
+if(tab==0&&L)return `<div class="card" data-i="${i}">${L.map(f=>f[0]=="中文名稱"?`<div class="row"><span class="k">${f[0]}</span><a class="t">${esc(f[1])}</a></div>`:`<div class="row"><span class="k">${esc(f[0])}</span><span>${esc(f[1]||"")}${(f[2]||[]).map(l=>`<a href="${esc(l[2]||l[1])}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📄 ${esc(l[0])}</a>`).join(" ")}</span></div>`).join("")}${(m["大分類"]||"").startsWith("未確認")?'<div class="bad">未確認安全性，尚不得使用</div>':""}</div>`;
+if(tab==0)return `<div class="card" data-i="${i}"><div class="t">${esc(m["中文名稱"])}</div><div class="s"><i>${esc(m["學名"]||"")}</i>${m["外文名稱"]?" ・ "+esc(m["外文名稱"]):""}</div><div class="s">部位：${esc(m["部位"]||"—")}</div></div>`;
+return `<div class="card" data-i="${i}"><div class="row"><span class="k">項次</span><span>${esc(L?L[0][1]:i+1)}</span></div><div class="row"><span class="k">類別</span><span>${esc(m["類別"]||"")}</span></div><div class="row"><span class="k">中文品名</span><a class="t">${esc(m["中文名稱"])}</a></div><div class="row"><span class="k">英文品名</span><span>${esc(m["外文名稱"]||"")}</span></div><div class="row"><span class="k">使用範圍及限量</span><span class="clip">${esc(m["使用食品範圍及限量"]||"")}</span></div></div>`}).join("");
+$("more").hidden=hits.length<=lim;}
+function show(i){const it=SETS[tab][i];const n=DATA.catNotes&&DATA.catNotes[it.cat];
+$("dbody").innerHTML=`<div class="banner">${tab?"類別":"次分類"}：${esc(it.m[CATK[tab]]||"")}</div><h2>${esc(it.m["中文名稱"])}</h2><h3>詳細資料</h3><dl class="tbl">${it.fields.map(f=>`<dt>${esc(f[0])}</dt><dd>${f[2]&&f[2].length?"":esc(f[1]||"—")}${(f[2]||[]).map((l,j)=>`${j?"<br>":""}<a href="${esc(l[2]||l[1])}" target="_blank" rel="noopener">📄 ${esc(l[0])}</a>${l[2]?` <small>（<a href="${esc(l[1])}" target="_blank" rel="noopener">TFDA 原檔</a>）</small>`:""}`).join("")}</dd>`).join("")}</dl>${n?`<h3>類別說明（${esc(it.cat)}）</h3><div class="pre">${esc(n)}</div>`:""}<p><a class="btn" href="${esc(it.url)}" target="_blank" rel="noopener">開啟 TFDA 原始頁面 ↗</a></p>`;
+$("detail").hidden=false;$("detail").scrollTop=0;history.pushState({d:1},"");}
+function hide(){$("detail").hidden=true;}
+$("list").onclick=e=>{const c=e.target.closest(".card");if(c)show(+c.dataset.i)};
+$("back").onclick=()=>history.back();window.onpopstate=hide;
+
+function hist(){const L=(DATA.changelog||[]).slice().reverse();const nm=x=>esc(x[1])+` <small>(${x[0].startsWith("ing")?"原料":"添加物"})</small>`;
+$("hist").innerHTML=L.map(e=>`<div class="card"><div class="t">${esc(e.time)}（台灣時間）${e.type=="initial"?"・初次匯入":""}</div><div class="s">原料 ${e.counts.ing} 筆・添加物 ${e.counts.add} 筆・開放資料抓取 ${esc(e.opendataFetched)}</div>${e.type=="initial"?"":(!e.added.length&&!e.removed.length&&!e.changed.length?'<div class="s">無變動</div>':"")+(e.added.length?`<div class="row"><span class="k">新增</span><span>${e.added.map(nm).join("、")}</span></div>`:"")+(e.removed.length?`<div class="row"><span class="k">移除</span><span>${e.removed.map(nm).join("、")}</span></div>`:"")+(e.changed.length?`<div class="row"><span class="k">變更</span><span>${e.changed.map(x=>nm(x)+"："+esc(x[2].join("、"))).join("<br>")}</span></div>`:"")}</div>`).join("");}
+function setTab(t){$("disc").hidden=t!=0;if(t==2){["t0","t1","t2"].forEach((b,j)=>$(b).className=j==2?"on":"");$("hist").hidden=false;hist();document.querySelector(".form").hidden=$("list").hidden=$("cnt").hidden=true;$("more").hidden=true;return}
+$("hist").hidden=true;document.querySelector(".form").hidden=$("list").hidden=$("cnt").hidden=false;tab=t;lim=50;["t0","t1","t2"].forEach((b,j)=>$(b).className=j==t?"on":"");cats();render();}
+$("t2").onclick=()=>setTab(2);
+$("t0").onclick=()=>setTab(0);$("t1").onclick=()=>setTab(1);
+$("q").oninput=e=>{if(comp||e.isComposing)return;lim=50;render();suggest()};$("q").onkeydown=e=>{if(e.key=="Enter"&&!e.isComposing){$("ac").hidden=true;$("q").blur();render()}};$("go").onclick=()=>{lim=50;render()};$("rs").onclick=()=>{$("q").value="";$("cat1").value="";sub();lim=50;render()};$("cat1").onchange=()=>{sub();lim=50;render()};$("cat").onchange=()=>{lim=50;render()};$("more").onclick=()=>{lim+=100;render()};
+
+const SUG=SETS.map(S=>{const a=[];S.forEach((it,i)=>{const seen=new Set();const lm={};(it.list||[]).forEach(f=>lm[f[0]]=f[1]);[["中文名稱",it.m["中文名稱"]],["外文名稱",it.m["外文名稱"]],["學名",it.m["學名"]],["有效學名",lm["有效學名"]],["學名變遷",lm["學名變遷"]]].forEach(([k,v])=>String(v||"").split(/[；;,，\n]/).map(x=>x.trim()).filter(x=>x.length>1).forEach(x=>{if(seen.has(x))return;seen.add(x);a.push([x,x.toLowerCase().replace(/\s+/g," "),i,k])}))});return a});
+function hl(s,q){const i=s.toLowerCase().indexOf(q);if(i<0){let o="",j=0;for(const ch of s){if(j<q.length&&ch.toLowerCase()==q[j]){o+="<b>"+esc(ch)+"</b>";j++}else o+=esc(ch)}return o}return esc(s.slice(0,i))+"<b>"+esc(s.slice(i,i+q.length))+"</b>"+esc(s.slice(i+q.length))}
+function subseq(s,q){let j=0;for(const ch of s){if(ch==q[j])j++;if(j==q.length)return true}return false}
+function suggest(){const q=$("q").value.trim().toLowerCase().replace(/\s+/g," ");if(!q){$("ac").hidden=true;return}
+const A=SUG[tab],p=[],c=[],f=[];for(const x of A){if(x[1].startsWith(q))p.push(x);else if(x[1].includes(q)||x[1].includes(" "+q))c.push(x);else if(q.length>=2&&f.length<8&&subseq(x[1],q))f.push(x);if(p.length>=10)break}
+const r=p.concat(c,f).slice(0,10);if(!r.length){$("ac").hidden=true;return}
+$("ac").innerHTML=r.map(x=>`<div class="sg" data-i="${x[2]}">${hl(x[0],q)}<small>${esc(x[3])}${x[3]=="中文名稱"?"":"・"+esc(SETS[tab][x[2]].m["中文名稱"].split("；")[0])}</small></div>`).join("");$("ac").hidden=false}
+$("ac").onmousedown=e=>e.preventDefault();
+$("ac").onclick=e=>{const s=e.target.closest(".sg");if(!s)return;$("ac").hidden=true;show(+s.dataset.i)};
+let comp=false;$("q").addEventListener("compositionstart",()=>comp=true);$("q").addEventListener("compositionend",()=>{comp=false;lim=50;render();suggest()});
+$("q").addEventListener("blur",()=>setTimeout(()=>$("ac").hidden=true,150));$("q").addEventListener("focus",suggest);
+setTab(0);
+</script><script>
+(async()=>{let r;try{r=await fetch("data.json")}catch(e){}
+if(!r||!r.ok){document.body.innerHTML="<p style='padding:20px'>離線資料尚未下載，請連上網路開啟一次。</p>";return}
+window.__DATA=await r.json();const s=document.createElement("script");s.textContent=document.getElementById("main").textContent;document.body.appendChild(s);
+const st=document.getElementById("offst");
+if("serviceWorker" in navigator){await navigator.serviceWorker.register("sw.js");
+ navigator.serviceWorker.addEventListener("message",e=>{if(e.data.type=="updated"){sessionStorage.setItem("upd","1");location.reload();}if(e.data.type=="progress")st.textContent=`附件離線下載：${e.data.done}/${e.data.total}`;});
+ const ping=()=>navigator.serviceWorker.ready.then(w=>w.active&&w.active.postMessage({type:"check"}));ping();addEventListener("online",ping);
+ document.getElementById("dlall").onclick=()=>navigator.serviceWorker.ready.then(w=>w.active.postMessage({type:"dlall"}));}
+if(sessionStorage.getItem("upd")){sessionStorage.removeItem("upd");const t=document.createElement("div");t.textContent="已更新至 "+(window.__DATA.detailsScraped||window.__DATA.fetched);t.style.cssText="position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#00808a;color:#fff;padding:10px 16px;border-radius:20px;z-index:99";document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
+st.textContent=navigator.onLine?"已連線・資料可離線使用":"離線模式";
+})();
+</script></body></html>
