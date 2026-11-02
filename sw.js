@@ -1,4 +1,4 @@
-const SHELL="shell-fed99cf4dbb0",DATA="data",ATT="att";
+const SHELL="shell-a3a6e058ec4d",DATA="data",ATT="att";
 const CORE=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png"];
 self.addEventListener("install",e=>e.waitUntil((async()=>{const c=await caches.open(SHELL);await c.addAll(CORE);const d=await caches.open(DATA);await d.add("data.json");await d.add("version.json");self.skipWaiting()})()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith("shell-")&&k!=SHELL)await caches.delete(k);await self.clients.claim()})()));
