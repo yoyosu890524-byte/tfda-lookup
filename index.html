@@ -32,6 +32,7 @@ header{padding:0;border:0;position:sticky;top:0;z-index:5}.top{background:#00808
 .acw{position:relative}#ac{position:absolute;left:0;right:0;top:100%;background:Canvas;border:1px solid var(--b);border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:20;max-height:60vh;overflow:auto}#ac[hidden]{display:none}
 .sg{padding:10px 12px;border-bottom:1px solid var(--b);font-size:15px;cursor:pointer}.sg:before{content:"🔍 ";opacity:.5}.sg small{color:var(--m);margin-left:6px}.sg b{color:#f08300}
 .disc{margin:10px 12px 0;padding:10px 12px;border:1px solid #f08300;border-radius:8px;font-size:13px;white-space:pre-wrap;max-height:9em;overflow:auto}
+.hsum{font-weight:600;margin:6px 0}.hi{border-top:1px solid var(--b);padding:8px 0;cursor:pointer}.hi:not([data-h]){cursor:default}.hc{font-size:12px;color:var(--m)}.tag{font-size:12px;padding:1px 6px;border-radius:4px;color:#fff;margin-right:6px}.tag.a{background:#2a8a3e}.tag.r{background:#b33}.tag.c{background:#c77d00}.hf{font-size:13px;margin-top:4px}.hf del{color:#b33}.hf ins{color:#2a8a3e;text-decoration:none}
 </style></head><body>
 <header><div class="top">食品原料整合查詢平臺<small id="meta"></small></div>
 <div class="tabs"><button id="t0" class="on">食品原料</button><button id="t1">食品添加物</button><button id="t2">更新歷程</button></div></header>
@@ -71,8 +72,17 @@ function hide(){$("detail").hidden=true;}
 $("list").onclick=e=>{const c=e.target.closest(".card");if(c)show(+c.dataset.i)};
 $("back").onclick=()=>history.back();window.onpopstate=hide;
 
-function hist(){const L=(DATA.changelog||[]).slice().reverse();const nm=x=>esc(x[1])+` <small>(${x[0].startsWith("ing")?"原料":"添加物"})</small>`;
-$("hist").innerHTML=L.map(e=>`<div class="card"><div class="t">${esc(e.time)}（台灣時間）${e.type=="initial"?"・初次匯入":""}</div><div class="s">原料 ${e.counts.ing} 筆・添加物 ${e.counts.add} 筆・開放資料抓取 ${esc(e.opendataFetched)}</div>${e.type=="initial"?"":(!e.added.length&&!e.removed.length&&!e.changed.length?'<div class="s">無變動</div>':"")+(e.added.length?`<div class="row"><span class="k">新增</span><span>${e.added.map(nm).join("、")}</span></div>`:"")+(e.removed.length?`<div class="row"><span class="k">移除</span><span>${e.removed.map(nm).join("、")}</span></div>`:"")+(e.changed.length?`<div class="row"><span class="k">變更</span><span>${e.changed.map(x=>nm(x)+"："+esc(x[2].join("、"))).join("<br>")}</span></div>`:"")}</div>`).join("");}
+function hfind(x){const t=x.t=="add"?1:0,S=SETS[t];let i=-1;if(x.id)i=S.findIndex(r=>String(r.id)==x.id);if(i<0&&x.sig)i=S.findIndex(r=>r.fields.map(f=>f[1]).join("|")==x.sig);return [t,i]}
+function hopen(el){const [t,i]=hfind(HX[+el.dataset.h]);if(i<0){alert("此項目已不在目前資料中");return}tab=t;show(i)}
+let HX=[];
+function hist(){const L=(DATA.changelog||[]).slice().reverse();HX=[];
+const it=(x,cls)=>{if(Array.isArray(x))x={key:x[0],t:x[0].split(":")[0],label:x[1]||"(未命名)",fields:Array.isArray(x[2])?x[2].map(f=>typeof f=="string"?[f]:f):null};
+ const h=HX.push(x)-1,[,i]=hfind(x);const tl=x.t=="add"?"添加物":"原料";
+ const fl=x.fields?`<div class="hf">${x.fields.map(f=>f.length<3?`<div>${esc(f[0])}</div>`:`<div><b>${esc(f[0])}</b>：<del>${esc(f[1]||"（空白）")}</del> → <ins>${esc(f[2]||"（空白）")}</ins></div>`).join("")}</div>`:"";
+ return `<div class="hi ${cls}"${i>=0?` data-h="${h}" onclick="hopen(this)"`:""}><span class="tag ${cls}">${cls=="a"?"新增":cls=="r"?"移除":"變更"}</span><b>${esc(x.label)}</b>${i>=0?" ›":""}<div class="hc">${tl}${x.cat?"・"+esc(x.cat):""}</div>${fl}</div>`};
+$("hist").innerHTML=L.map(e=>{const A=e.added||[],R=e.removed||[],C=e.changed||[],n=A.length+R.length+C.length;
+ const items=A.map(x=>it(x,"a")).concat(R.map(x=>it(x,"r")),C.map(x=>it(x,"c"))).join("");
+ return `<div class="card"><div class="t">${esc(e.time)}（台灣時間）${e.type=="initial"?"・初次匯入":""}</div><div class="s">原料 ${e.counts.ing} 筆・添加物 ${e.counts.add} 筆</div>${e.type=="initial"?"":`<div class="hsum">新增 ${A.length}・移除 ${R.length}・變更 ${C.length}</div>`+(n?(n>5?`<details><summary>顯示 ${n} 筆明細</summary>${items}</details>`:items):"")}</div>`}).join("");}
 function setTab(t){$("disc").hidden=t!=0;if(t==2){["t0","t1","t2"].forEach((b,j)=>$(b).className=j==2?"on":"");$("hist").hidden=false;hist();document.querySelector(".form").hidden=$("list").hidden=$("cnt").hidden=true;$("more").hidden=true;return}
 $("hist").hidden=true;document.querySelector(".form").hidden=$("list").hidden=$("cnt").hidden=false;tab=t;lim=50;["t0","t1","t2"].forEach((b,j)=>$(b).className=j==t?"on":"");cats();render();}
 $("t2").onclick=()=>setTab(2);
